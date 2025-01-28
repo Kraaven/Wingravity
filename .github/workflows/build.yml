@@ -1,0 +1,31 @@
+name: Build Gravity DLL for Windows
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up MSVC
+      uses: ilammy/msvc-dev-cmd@v1
+
+    - name: Build Gravity
+      run: |
+        mkdir build
+        cd build
+        cmake -G "Visual Studio 17 2022" -A x64 ..
+        cmake --build . --config Release
+
+    - name: Upload DLL as artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: gravity.dll
+        path: build/Release/gravity.dll
